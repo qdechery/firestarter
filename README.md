@@ -1,10 +1,3 @@
-<p align="center">
-
-<a href="https://slackin-pbfjhfxnsa.now.sh"><img src="https://slackin-pbfjhfxnsa.now.sh/badge.svg"></a>
-
-<a href="https://circleci.com/gh/codediodeio/angular-firestarter"><img src="https://circleci.com/gh/codediodeio/angular-firestarter.svg?style=svg"></a>
-
-</p>
 
 # FireStarter
 
@@ -27,7 +20,7 @@ FireStarter is an Angular PWA powered by Firebase. It can serve as a foundation 
 
 1.  Run
 
-- `git clone https://github.com/codediodeio/angular-firestarter.git firestarter`
+- `git clone https://github.com/qdechery/firestarter firestarter`
 - `cd firestarter`
 - `npm install`
 

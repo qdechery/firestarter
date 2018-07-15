@@ -1,0 +1,20 @@
+<ngui-map class='map' style="height:700px; width:100%"
+  center="[47.608013, -122.335167]"
+  zoom='4'
+  [zoomControlOptions]="{position: 'TOP_CENTER'}"
+  [fullscreenControl]="true"
+  [fullscreenControlOptions]="{position: 'TOP_CENTER'}"
+  [scrollwheel]="true"
+  (click)="onClick($event)">
+  <marker *ngFor='let pos of positions' 
+    [position]="pos"
+    (rightclick)="onRightClick($event)"
+    (dragstart)="findLocation($event)"
+    (drag)="findLocation($event)"
+    draggable="true"></marker>
+</ngui-map>
+
+<ul id='DestList' *ngFor='let loc of locations'>
+	<li class='destination' *ngIf="loc">{{loc}}</li>
+</ul>
+ 

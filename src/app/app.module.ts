@@ -3,6 +3,7 @@ import {
   BrowserTransferStateModule
 } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import {HttpClientModule, HttpClient} from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,12 +23,18 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireFunctionsModule } from 'angularfire2/functions';
 
+//Map Module
+import { MapComponent } from './map/map.component';
+import { NguiMapModule} from '@ngui/map';
+import { VoteComponent } from './vote/vote.component';
+
 // IMPORTANT
 // Add your own project credentials to environments/*.ts
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, MapComponent, VoteComponent],
   imports: [
+    HttpClientModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserTransferStateModule,
     AppRoutingModule,
@@ -42,7 +49,8 @@ import { AngularFireFunctionsModule } from 'angularfire2/functions';
     AngularFireFunctionsModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {
       enabled: environment.production
-    })
+    }),
+    NguiMapModule.forRoot({ apiUrl: 'https://maps.google.com/maps/api/js?key=AIzaSyAXg1EdfqORW9vRMznLUkOzDS79qORUJ8E' }),
   ],
   bootstrap: [AppComponent]
 })

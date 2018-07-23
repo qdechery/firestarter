@@ -61,7 +61,7 @@ export class MapComponent {
       //Push Location to Datbase
       var dateNow = new Date().toDateString();
       var timeNow = new Date().toTimeString();
-      var now = dateNow+timeNow;
+      var now = dateNow+' '+timeNow;
 
 
       this.locRef = this.afs.collection<Location>('destinations');

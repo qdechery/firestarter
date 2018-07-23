@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { AuthService, User } from '../core/auth.service';
 
 export interface Item { id: string; name: string; }
-export interface Location { id: string, location: string, user: string; }
+export interface Location { id: string, location: string, user: string, timeAdded: string; }
 
 @Component({
   selector: 'app-map',
@@ -59,9 +59,18 @@ export class MapComponent {
       // this.auth.user.subscribe(user => console.log(user.displayName.toString()));
   		// console.log(this.auth.user);
       //Push Location to Datbase
-      this.locRef = this.afs.collection<Location>('destinations');
-      this.locRef.add({id: this.afs.createId(), location: location, user: this.user })
+      var dateNow = new Date().toDateString();
+      var timeNow = new Date().toTimeString();
+      var now = dateNow+timeNow;
 
+
+      this.locRef = this.afs.collection<Location>('destinations');
+      this.locRef.add({
+        id: this.afs.createId(), 
+        location: location, 
+        user: this.user,
+        timeAdded: now })
+      // console.log(timeNow.toDateString(), timeNow.toTimeString())
     });
 
   }

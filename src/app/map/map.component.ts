@@ -21,7 +21,8 @@ export class MapComponent {
   positions: any[] = [];
   locations: any[] = [];
   events: any[] = [];
-  itemRef: AngularFirestoreCollection<Item>;
+  destCollection: AngularFirestoreCollection<Location>;
+  destination: Observable<Location[]>;
   locRef: AngularFirestoreCollection<Location>;
   user: string;
   // private decimal: number = 6;
@@ -73,6 +74,12 @@ export class MapComponent {
       // console.log(timeNow.toDateString(), timeNow.toTimeString())
     });
 
+  }
+
+  addDestinations(){
+    this.destCollection = this.afs.collection<Location>('destinations');
+    this.destination = this.destCollection.valueChanges();
+    console.log(this.destination);
   }
 
   findLocation(event) {

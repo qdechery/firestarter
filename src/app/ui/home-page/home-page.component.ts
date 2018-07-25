@@ -3,9 +3,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection  } from 'angularfire2/firestore';
 
 import { Observable } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/observable/combineLatest';
+import { map } from 'rxjs/operators';
 
 import { AuthService } from './../../core/auth.service';
 
@@ -15,6 +13,14 @@ export interface User {
   photoURL: string;
 }
 
+export interface Location { 
+  id: string;
+  location: string; 
+  user: string;
+  timeAdded: string; 
+}
+// export interface LocationId extends Location { id: string; }
+
 @Component({
   selector: 'home-page',
   templateUrl: './home-page.component.html',
@@ -22,9 +28,24 @@ export interface User {
 })
 export class HomePageComponent implements OnInit {
   users$: Observable<User[]>;
+  private destCollection: AngularFirestoreCollection<Location>;
+  destinations: Observable<Location[]>;
+  // locRef: AngularFirestoreCollection<Location>;
 
   
   constructor(afs: AngularFirestore, public auth: AuthService) {
+    this.destCollection = afs.collection<Location>('destinations');
+    this.destinations = this.destCollection.valueChanges();
+
+
+    // this.destinations = this.destCollection.snapshotChanges().pipe(
+    //   map(actions => actions.map(a => {
+    //     const data = a.payload.doc.data() as Location;
+    //     const id = a.payload.doc.id;
+    //     console.log( id, ...data );
+    //   }))
+    // );
+    // console.log(this.destinations$)
     // this.users$ = Observable.subscribe(user => 
     //   afs.collection<User>('users', ref => {
     //     // let query : firebase.firestore.Query = ref;

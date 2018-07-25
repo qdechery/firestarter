@@ -1,6 +1,23 @@
 <h1>Welcome to Vacation Planner</h1>
 
+   <ul>
+      <li *ngFor="let dest of destinations | async">
+        {{ dest.location }}
+      	<ul class='sub-dest-data'>
+      		<li>
+      			{{ dest.user }}
+      		</li>
+			<li>
+      			{{ dest.timeAdded }}
+      		</li>
+      	</ul>
+      </li>
 
+    </ul>
+
+  <!-- <ul id='DestList' *ngIf="this.destinations$ | async as this.destinations$"> -->
+    <!-- <li class='destination' *ngIf="loc">{{loc}}</li> -->
+  <!-- </ul> -->
 <!-- <button (click)='firebase()'>Firebase</button> -->
 <!-- <a href="https://slackin-pbfjhfxnsa.now.sh"><img src="https://slackin-pbfjhfxnsa.now.sh/badge.svg"></a><br>
 <a href="https://circleci.com/gh/codediodeio/angular-firestarter"><img src="https://circleci.com/gh/codediodeio/angular-firestarter.svg?style=svg"></a>

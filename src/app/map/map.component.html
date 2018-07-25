@@ -12,7 +12,11 @@
     (dragstart)="findLocation($event)"
     (drag)="findLocation($event)"
     draggable="true"></marker>
+  <marker *ngFor='let loc of destinations'
+    [position]='loc'
+  ></marker>
 </ngui-map>
+<button (click)="addDestinations()">Destinations</button>
 
 <ul id='DestList' *ngFor='let loc of locations'>
 	<li class='destination' *ngIf="loc">{{loc}}</li>

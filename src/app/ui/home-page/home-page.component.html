@@ -1,18 +1,17 @@
 <h1>Welcome to Vacation Planner</h1>
 
-   <ul>
-      <li *ngFor="let dest of destinations | async">
+   <ul class='container'>
+      <li class='item' *ngFor="let dest of destinations | async">
         <u><b>{{ dest.location[1].formatted_address }}</b></u>
       	<ul class='sub-dest-data'>
-      		<li>
-      			Added by: {{ dest.user }}
+      		<li class='subitem'>
+      			Added by: {{ dest.user[0] }}
       		</li>
-			<li>
+			<li class='subitem'>
       			Date Added: {{ dest.timeAdded[0] }}
       		</li>
       	</ul>
-      </li>
-
+      </li>	
     </ul>
 
   <!-- <ul id='DestList' *ngIf="this.destinations$ | async as this.destinations$"> -->

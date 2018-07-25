@@ -2,13 +2,13 @@
 
    <ul>
       <li *ngFor="let dest of destinations | async">
-        {{ dest.location }}
+        <u><b>{{ dest.location[1].formatted_address }}</b></u>
       	<ul class='sub-dest-data'>
       		<li>
-      			{{ dest.user }}
+      			Added by: {{ dest.user }}
       		</li>
 			<li>
-      			{{ dest.timeAdded }}
+      			Date Added: {{ dest.timeAdded[0] }}
       		</li>
       	</ul>
       </li>

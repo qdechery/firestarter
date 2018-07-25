@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NguiMapModule } from '@ngui/map';
 import { DestinationService } from './../destination.service';
+import { PlacesService } from './../places.service';
 import { HttpClient } from '@angular/common/http';
 import { AngularFirestoreCollection, AngularFirestore, AngularFirestoreDocument } from "angularfire2/firestore";
 import { Observable } from 'rxjs';
@@ -9,7 +10,11 @@ import { Observable } from 'rxjs';
 import { AuthService, User } from '../core/auth.service';
 
 export interface Item { id: string; name: string; }
-export interface Location { id: string, location: string, user: string, timeAdded: string; }
+export interface Location { 
+  id: string, 
+  location: any[], 
+  user: any[], 
+  timeAdded: any[]; }
 
 @Component({
   selector: 'app-map',
@@ -20,21 +25,29 @@ export interface Location { id: string, location: string, user: string, timeAdde
 export class MapComponent {
   positions: any[] = [];
   locations: any[] = [];
+  placesPhotos: any[] = [];
   events: any[] = [];
   destCollection: AngularFirestoreCollection<Location>;
   destination: Observable<Location[]>;
   locRef: AngularFirestoreCollection<Location>;
   user: string;
+  userid: string;
+  latlng: string;
+  photo: any;
   // private decimal: number = 6;
 
   constructor(
       private destinationservice: DestinationService, 
+      private places: PlacesService, 
       private afs: AngularFirestore,
       private auth: AuthService,
   ) {
     // this.itemRef = afs.collection<Item>('items');
     // this.itemRef.add({id: '9', name: 'david'})
-    this.auth.user.subscribe(user => this.user = user.displayName);
+    this.auth.user.subscribe(user => {
+      this.user = user.displayName;
+      this.userid = user.uid;
+    });
     
     // this.user = this.auth.user.subscribe(user => user.displayName);
   }
@@ -43,38 +56,57 @@ export class MapComponent {
   	if(event instanceof MouseEvent) return;
   	this.positions.push(event.latLng);
   	// console.log('Left Click: ', event.latLng.lat(), event.latLng.lng());
+
+    //Get lat/lng of clicked position on map
  	  var newLat = event.latLng.lat();
  	  var newLng = event.latLng.lng();
   	var modLatLng = newLat+","+newLng;
   	
-    this.destinationservice.getAddress(modLatLng).subscribe(data => {
-      var location = data['results'][1].formatted_address.split(",")[0]
 
+    //Get formatted address of location clicked based on lat/lng
+    this.destinationservice.getAddress(modLatLng).subscribe(data => {
+      var location = data['results'][1].formatted_address.split(",").splice(0,2)
+      console.log(data['results'])
       //Push location to UI array
     	this.locations.push(location)
+
+      //Retrieve lat/lng of location.
+      // var lat = data['results'][0].geometry.location.lat;
+      // var lng = data['results'][0].geometry.location.lng;
+      var lat = newLat;
+      var lng = newLng;
+      this.latlng = lat+','+lng;
 
       //Get Active User
       // var curUser = this.auth.user.subscribe(user => user.displayName);
       // var curUserStr = curUser.toString();
       // console.log(curUser);
       // this.auth.user.subscribe(user => console.log(user.displayName.toString()));
-  		// console.log(this.auth.user);
+      // console.log(this.auth.user);
       //Push Location to Datbase
+
+      //Get Date Time
       var dateNow = new Date().toDateString();
       var timeNow = new Date().toTimeString();
-      var now = dateNow+' '+timeNow;
+      // var now = dateNow+' '+timeNow;
 
-
+      //Push location to Destinations cloud firestore
       this.locRef = this.afs.collection<Location>('destinations');
       this.locRef.add({
         id: this.afs.createId(), 
-        location: location, 
-        user: this.user,
-        timeAdded: now })
+        location: data['results'], 
+        user: [this.user, this.userid],
+        timeAdded: [dateNow, timeNow] })
       // console.log(timeNow.toDateString(), timeNow.toTimeString())
     });
 
+    this.places.getPlacePhoto(this.latlng).subscribe(data => {
+      this.photo = data;
+      // console.log(data);
+    });
+
   }
+
 
   addDestinations(){
     this.destCollection = this.afs.collection<Location>('destinations');
@@ -112,9 +144,13 @@ export class MapComponent {
 
   onRightClick(event){
     //Remove Map Marker Destination
-	  const index=this.destinationservice.whichPos(this.positions, event)
+	  const index = this.destinationservice.whichPos(this.positions, event)
 	  this.positions.splice(index, 1)
 	  this.locations.splice(index, 1)
+
+    //Get destination reference string
+    const destRef = ''
+    this.locRef.doc(destRef).delete()
   }
 }
 

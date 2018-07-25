@@ -1,3 +1,4 @@
+<div id='map'>
 <ngui-map class='map' style="height:700px; width:100%"
   center="[47.608013, -122.335167]"
   zoom='4'
@@ -12,13 +13,14 @@
     (dragstart)="findLocation($event)"
     (drag)="findLocation($event)"
     draggable="true"></marker>
-  <marker *ngFor='let loc of destinations'
+  <marker *ngFor='let loc of destination'
     [position]='loc'
   ></marker>
 </ngui-map>
-<button (click)="addDestinations()">Destinations</button>
-
+<!-- <button (click)="addDestinations()">Destinations</button> -->
+</div>
 <ul id='DestList' *ngFor='let loc of locations'>
 	<li class='destination' *ngIf="loc">{{loc}}</li>
+  <li *ngFor='let photo'> {{photo}}</li>
 </ul>
  

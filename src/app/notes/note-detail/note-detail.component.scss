@@ -1,3 +1,24 @@
 .basic-note {
     visibility: visible;
+    width: 58vw;
+}
+
+.heartBut, .deleteBut {
+	border-radius: 12px;
+}
+
+.deleteBut {
+	float: right;
+}
+
+.noteCreator {
+	font-size: 16px;
+	padding: 0px;
+	font-weight: bold;
+}
+
+.note {
+	font-size: 16px;
+	padding: 0px;
+	margin: 0px;
 }

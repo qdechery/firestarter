@@ -1,5 +1,5 @@
 <div id='map'>
-<ngui-map class='map' style="height:700px; width:100%"
+<ngui-map class='map' style="height:80vh; width:100%"
   center="[47.608013, -122.335167]"
   zoom='4'
   [zoomControlOptions]="{position: 'TOP_CENTER'}"
@@ -10,17 +10,17 @@
   <marker *ngFor='let pos of positions' 
     [position]="pos"
     (rightclick)="onRightClick($event)"
-    (dragstart)="findLocation($event)"
-    (drag)="findLocation($event)"
+    (dragstart)="onStartDrag($event)"
+    (dragend)="onDrag($event)"
+    
     draggable="true"></marker>
-  <marker *ngFor='let loc of destination'
-    [position]='loc'
-  ></marker>
 </ngui-map>
 <!-- <button (click)="addDestinations()">Destinations</button> -->
 </div>
 <ul id='DestList' *ngFor='let loc of locations'>
-	<li class='destination' *ngIf="loc">{{loc}}</li>
-  <li *ngFor='let photo'> {{photo}}</li>
+	<li class='destination' *ngIf="loc">{{user}}: {{loc}}</li>
+  <!-- <li *ngIf='photo | async as photo'>{{photo}}</li> -->
 </ul>
  
+
+ <!-- (drag)="findLocation($event)" -->

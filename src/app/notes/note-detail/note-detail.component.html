@@ -1,8 +1,16 @@
 <div class="basic-note">
-    <h3>{{ note.content }}</h3>
-    <span class="button is-small is-info" (click)='addHeartToNote(note.hearts)'>
-    Heart <i class="fa fa-heart" style="margin-left: 5px;"></i>
-  </span>
-    <span class="button is-small is-danger" (click)='deleteNote(note?.id)'>Delete</span>
+    <p>
+    	<span class='noteCreator'>{{ note.user[0]}}: </span>
+    	<span class='note'>{{ note.content }}</span>
+    </p>
+    <span class="heartBut button is-small is-info" (click)='addHeartToNote(note.hearts)'>
+    	Heart 
+    	<i class="fa fa-heart" style="margin-left: 5px;"></i>
+  	</span>
+    <span class="deleteBut button is-small is-danger" (click)='deleteNote(note?.id)'>
+    	Delete 
+    	<i class="fa fa-close" style="margin-left: 5px;"></i>
+    </span>
     <p>This note has been hearted {{ note.hearts || 0 }} times.</p>
+    <!-- <p>Time Posted: {{new Date(note.time * 10000).format('h:i:s')}}</p> -->
 </div>

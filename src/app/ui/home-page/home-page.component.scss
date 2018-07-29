@@ -7,16 +7,17 @@ ul, li {
 }
 
 .item {
+	font-size: 20px;
 //	flex-basis: auto;
 	margin: 5px;
 	padding: 15px;
 	background: lightblue;
 	border: 2px solid skyblue;
-	width: 250px;
+	width: auto;
 }	
 
 .subitem {
 	display: block;
-	font-size: 10px;
+	font-size: 12px;
 	margin-bottom: 10px;
 }

@@ -5,10 +5,12 @@
 <input [(ngModel)]="content" placeholder="Add your own note" class="input" name="note">
 
 
-<button class="button is-success" (click)="clickHandler()" [disabled]="content?.length < 2 || content?.length > 200">
+<button class="button is-success" (click)="clickHandler()" [disabled]="content?.length < 2 || content?.length > 2000">
   Add Note
 </button>
 <hr>
-<div *ngFor="let note of notes | async">
-    <note-detail [note]="note"></note-detail>
+<button class="loadNotes button is-confirm" (click)="loadMore(10)">Load 10 More Notes</button>
+<button class="loadNotes button is-confirm" (click)="loadMore(100)">Load 100 More Notes</button>
+<div class='notes' *ngFor="let note of notes | async">
+    <note-detail class='note' [note]="note"></note-detail>
 </div>

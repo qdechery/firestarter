@@ -1,12 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { AngularFirestoreCollection, AngularFirestore, AngularFirestoreDocument } from "angularfire2/firestore";
+
+
+export interface Location { 
+  id: string, 
+  location: any[], 
+  user: any[], 
+  timeAdded: any[]; }
 
 @Injectable({
   providedIn: 'root'
 })
 export class DestinationService {
 
-  constructor(private http: HttpClient) { }
+  destCollection: AngularFirestoreCollection<Location>;
+  destination: Observable<Location[]>;
+
+  constructor(
+    private http: HttpClient, 
+    private destinationservice: DestinationService, 
+    private afs: AngularFirestore
+  ) { 
+
+  }
 
   getAddress(coordinates){
   	return this.http.get('https://maps.googleapis.com/maps/api/geocode/json?latlng='+coordinates+'&key=AIzaSyAXg1EdfqORW9vRMznLUkOzDS79qORUJ8E')
@@ -17,11 +34,36 @@ export class DestinationService {
   }
 
   whichPos(positions, event){
+    // console.log(positions);
   	for (let i=0; i<positions.length; i++){
-  		if(positions[i].lat() == event.latLng.lat()){
-  			return i
-  		}   		
+  		if(Array.isArray(positions[i])) {      
+        if(positions[i][0] == event.latLng.lat()){
+    			return i
+    		}   		
+    } else if (positions[i] instanceof Object){
+          if(positions[i].lat() == event.latLng.lat()){
+            return i
+          }       
+      }
   	}
+  }
+
+  whichId(latLng){
+    this.destCollection = this.afs.collection<Location>('destinations');
+    this.destination = this.destCollection.valueChanges();
+    this.destination.subscribe(locations => {
+      // console.log('locations:', locations, locations.length)
+      for (let i=0; i<locations.length; i++){
+        let lat = Number(locations[i].location[0].geometry.location.lat.toFixed(4));
+        let lng = Number(locations[i].location[0].geometry.location.lng.toFixed(4));
+        // console.log([lat, lng], latLng, JSON.stringify([lat, lng]) == JSON.stringify(latLng))
+        if(JSON.stringify([lat, lng]) == JSON.stringify(latLng)){
+          // console.log(locations[i])
+          console.log(i)
+          return i;
+        }
+      } 
+    }
   }
 
   whichLoc(locations, firstevent, event){
@@ -50,7 +92,12 @@ export class DestinationService {
   				console.log(i);
   			// return i
   		}
-	}
+	  }
   }
+
+  // whichDestId(event){
+
+  //   for 
+  // }
 
 }

@@ -11,7 +11,8 @@ export class NoteDetailComponent {
 
   @Input() note: any;
 
-  constructor(private notesService: NotesService) { }
+  constructor(private notesService: NotesService) {
+  }
 
   addHeartToNote(val: number) {
     if (this.note.id) {

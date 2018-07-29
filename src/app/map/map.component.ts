@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { NguiMapModule } from '@ngui/map';
@@ -26,7 +26,7 @@ export interface Location {
   // styleUrls: ['./map.component.css']
 })
 
-export class MapComponent implements OnInit, OnDestroy { 
+export class MapComponent implements OnInit { 
   positions: any[] = [];
   locations: any[] = [];
   placesPhotos: any[] = [];
@@ -88,10 +88,8 @@ export class MapComponent implements OnInit, OnDestroy {
         user: [this.user, this.userid],
         timeAdded: [dateNow, timeNow] 
       });
-    }
+    })
   }
-
-  ngOnChanges()
 
   addDestinations(){
     this.destCollection = this.afs.collection<Location>('destinations');
@@ -132,7 +130,7 @@ export class MapComponent implements OnInit, OnDestroy {
           return ;
         }
       } 
-    }
+    })
     // console.log(this.startDrag);
     // this.originalLoc = this.destinationservice.whichId(this.startDrag);
     // console.log(this.destinationservice.whichId(this.startDrag));
@@ -174,20 +172,21 @@ export class MapComponent implements OnInit, OnDestroy {
 
     })
 
-    this.destination = this.destCollection.snapshotChanges().subscribe(locations => {
-      for (let i=0; i<locations.length; i++){  
-        let info = locations[i].payload.doc.data() as Location;
+    // this.destination = this.destCollection.snapshotChanges()
+    // this.destination.subscribe(locations => {
+    //   for (let i=0; i<locations.length; i++){  
+    //     let info = locations[i].payload.doc.data() as Location;
 
-        // console.log(locations[i].payload.doc.id, ...info);
-        let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
-        let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
+    //     // console.log(locations[i].payload.doc.id, ...info);
+    //     let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
+    //     let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
 
-        if(JSON.stringify([lat, lng]) == JSON.stringify(eventLatLng)){
-          destId = locations[i].payload.doc.id;
-          // console.log('destId:', destId);
-        }
-      }
-    })
+    //     if(JSON.stringify([lat, lng]) == JSON.stringify(eventLatLng)){
+    //       destId = locations[i].payload.doc.id;
+    //       // console.log('destId:', destId);
+    //     }
+    //   }
+    // })
   }
 
   onRightClick(event){
@@ -206,7 +205,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     //Take snapshot of destinations collection and find which ID 
     //belongs to the event's lat/lng.
-    this.destination = this.destCollection.snapshotChanges().subscribe(locations => {
+    this.destCollection.snapshotChanges().subscribe(locations => {
       //Get each location's lat/lng.
       for (let i=0; i<locations.length; i++){  
         let info = locations[i].payload.doc.data() as Location;
@@ -224,10 +223,8 @@ export class MapComponent implements OnInit, OnDestroy {
       //Delete the refernced document ID based on right click event location
       this.destCollection.doc(destId).delete()
       //Remove from bogth locations (HTML list) and positions (markers) arrays
-      this.positions.splice(index, 1)
-      this.locations.splice(index, 1)
-
-      this.destination.unsubscribe();
+      // this.positions.splice(index, 1)
+      // this.locations.splice(index, 1)
     }) 
   }
 }

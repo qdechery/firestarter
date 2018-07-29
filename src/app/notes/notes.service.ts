@@ -13,7 +13,7 @@ export class NotesService {
   noteAdd: number = 10;
   notesCollection: AngularFirestoreCollection<any>;
   noteDocument:   AngularFirestoreDocument<any>;
-  user: string;
+  user: any[] = [];
 
   constructor(private afs: AngularFirestore, private auth: AuthService) {
     this.notesCollection = this.afs.collection('notes', (ref) => ref.orderBy('time', 'desc').limit(this.noteAdd));

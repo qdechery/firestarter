@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { AngularFirestoreCollection, AngularFirestore, AngularFirestoreDocument } from "angularfire2/firestore";
 
+import { Observable } from 'rxjs';
 
 export interface Location { 
   id: string, 
@@ -63,7 +65,7 @@ export class DestinationService {
           return i;
         }
       } 
-    }
+    })
   }
 
   whichLoc(locations, firstevent, event){

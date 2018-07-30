@@ -31,6 +31,7 @@ export class MapComponent implements OnInit {
   locations: any[] = [];
   placesPhotos: any[] = [];
   events: any[] = [];
+  locUsers: any[] = [];
   destCollection: AngularFirestoreCollection<Location>;
   destination: Observable<Location[]>;
   locRef: AngularFirestoreCollection<Location>;
@@ -64,7 +65,12 @@ export class MapComponent implements OnInit {
       this.userid = user.uid;
     });
     
-    
+    // this.destCollection = this.afs.collection<Location>('destinations');
+    // this.destination = this.destCollection.valueChanges();
+    // this.destination.subscribe(locations => {
+    //   console.log(locations)
+    // })
+
     // this.user = this.auth.user.subscribe(user => user.displayName);
   }
 
@@ -78,15 +84,11 @@ export class MapComponent implements OnInit {
 
   onClick(event) {
     if(event instanceof MouseEvent) return;
-    // Clear locations and positions arrays to avoid duplicating all destinations
-    this.locations=[];
-    this.positions=[];
 
     //Get lat/lng of clicked position on map
     let newLat = event.latLng.lat();
     let newLng = event.latLng.lng();
     let modLatLng = newLat+","+newLng;
-
 
     //Get Date Time
     let dateNow = new Date().toDateString();
@@ -95,11 +97,15 @@ export class MapComponent implements OnInit {
     //Push location to Destinations cloud firestore
     this.destinationservice.getAddress(modLatLng).subscribe(data => {
       let locData = data['results'];
-      // console.log(locData);
 
-      //Add destination to Firestore
-      // console.log('locdata:', locData);
-      if(locData.length !== 0){       
+      //Add destination to Firestore if lat/lng location request has results
+      // console.log('data.results:',data.results.length==0);
+      if(data.results.length != 0){       
+        // Clear locations and positions arrays to avoid duplicating all destinations
+        this.locations=[];
+        this.positions=[];
+    
+        //Add new location to Firebase database.
         this.destCollection.add({
           id: this.afs.createId(), 
           location: locData,
@@ -115,6 +121,7 @@ export class MapComponent implements OnInit {
     this.destination = this.destCollection.valueChanges();
     this.destination.subscribe(locations => {
       // console.log('addDest locations:', locations);
+      this.locUsers =[]
       for (let i=0; i<locations.length; i++){
         if(locations[i].location.length > 0){      
           //Set lat and lng of each location in destinations collection from Firebase Firestore.
@@ -128,8 +135,10 @@ export class MapComponent implements OnInit {
     
           //Push location to this.locations Array 
           this.locations.push(labelLoc);
+          this.locUsers.push(locations[i])
         }
       }
+      console.log('first this.locUsers.id:',this.locUsers)
     });
   }
 
@@ -140,6 +149,7 @@ export class MapComponent implements OnInit {
   }
 
   onStartDrag(event){
+    //Variables to get event of initial mousedown event
     let startLat = Number(event.latLng.lat().toFixed(4));
     let startLng = Number(event.latLng.lng().toFixed(4));
     this.startDrag = [startLat, startLng];

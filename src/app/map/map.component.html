@@ -14,19 +14,20 @@
     (rightclick)="onRightClick($event)"
     (dragstart)="onStartDrag($event)"
     (dragend)="onDrag($event)"
-    draggable="true">
-  </marker>
-  <info-window id="iw">
-      <div>
-        lat: {{ marker.lat }}, lng: {{ marker.lng }}
-      </div>
+    draggable="true"
+    >
+    <!-- icon='http://www.clker.com/cliparts/I/l/L/S/W/9/map-marker-hi.png' -->
+  <info-window id="iw" *ngFor='let dest of locUsers'>
+      <div *ngIf='dest.location[0].geometry.location.lat == pos[0]'>{{ pos }}</div>
+      <div>Added by: {{ dest.user[0] }}</div>
       <!-- <button (click)="hideMarkerInfo()">Hide Info</button> -->
-    </info-window>
+  </info-window>
+  </marker>
 </ngui-map>
 <!-- <button (click)="addDestinations()">Destinations</button> -->
 </div>
-<ul id='DestList' *ngFor='let loc of locations'>
-	<li class='destination' *ngIf="loc">{{user}}: {{loc}}</li>
+<ul id='DestList' class='list-group list-group-flush container' *ngFor='let dest of locUsers'>
+	<li class='list-group-item destination' *ngIf="dest">{{ dest.user[0] }}: {{ dest.location[0].formatted_address }}</li>
   <!-- <li *ngIf='photo | async as photo'>{{photo}}</li> -->
 </ul>
  

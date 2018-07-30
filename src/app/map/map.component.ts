@@ -98,7 +98,7 @@ export class MapComponent implements OnInit {
       // console.log(locData);
 
       //Add destination to Firestore
-      console.log('locdata:', locData);
+      // console.log('locdata:', locData);
       if(locData.length !== 0){       
         this.destCollection.add({
           id: this.afs.createId(), 
@@ -147,7 +147,7 @@ export class MapComponent implements OnInit {
     this.destination = this.destCollection.valueChanges();
     this.destination.subscribe(locations => {
       for (let i=0; i<locations.length; i++){
-          console.log('location i:',locations[i].location[0]);
+          // console.log('location i:',locations[i].location[0]);
         if(locations[i].location.length > 0){      
           let lat = Number(locations[i].location[0].geometry.location.lat.toFixed(4));
           let lng = Number(locations[i].location[0].geometry.location.lng.toFixed(4));
@@ -174,17 +174,17 @@ export class MapComponent implements OnInit {
     this.destCollection.snapshotChanges().subscribe(locations => {
       //Get each location's lat/lng.
       for (let i=0; i<locations.length; i++){  
-          let info = locations[i].payload.doc.data() as Location;
-        console.log('drag info:',info.location)        
+        let info = locations[i].payload.doc.data() as Location;
+        // console.log('drag info:',info.location)        
         if(info.location.length > 0){
           let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
           let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
 
           //Assign destination ID if lat/lng of this document matches 
           //the lat/lng of right click event.
-          console.log('lat:',lat, 'lng:', lng, 'origLoc:', origLoc)
+          // console.log('lat:',lat, 'lng:', lng, 'origLoc:', origLoc)
           if(JSON.stringify([lat, lng]) == JSON.stringify(origLoc)){
-            console.log('test')
+            // console.log('test')
             destId = locations[i].payload.doc.id;
             // destDocId = locations[i].payload.doc.data();
           }
@@ -202,17 +202,17 @@ export class MapComponent implements OnInit {
     let locData = []
     this.destinationservice.getAddress(modLatLng).subscribe(data=> {
         locData = data['results']
-        console.log('destinationservice.getaddres data:',data);
+        // console.log('destinationservice.getaddres data:',data);
     })
     // 5. Replace the data in original document ID with new location's data.  
-    setTimeout(() => {this.updateDraggedLoc(destId, destDocId, locData, this.user, this.userid)},1500)
+    setTimeout(() => {this.updateDraggedLoc(destId, destDocId, locData, this.user, this.userid)},500)
   }
 
   updateDraggedLoc(destId, destDocId, locationData, user, userid) { 
     this.locations=[];
     this.positions=[];
     //Get Date Time
-    console.log('destId:', destId, 'destDocId:', destDocId, 'locationData:', locationData, 'user:', user, 'userid:', userid)
+    // console.log('destId:', destId, 'destDocId:', destDocId, 'locationData:', locationData, 'user:', user, 'userid:', userid)
     let dateNow = new Date().toDateString();
     let timeNow = new Date().toTimeString();
     this.destCollection.doc(destId).update({
@@ -242,7 +242,7 @@ export class MapComponent implements OnInit {
     this.destCollection.snapshotChanges().subscribe(locations => {
       //Get each location's lat/lng.
       for (let i=0; i<locations.length; i++){
-        console.log('rightclick locations[i].payload.doc.data():', locations[i].payload.doc.data())
+        // console.log('rightclick locations[i].payload.doc.data():', locations[i].payload.doc.data())
         if (locations[i].payload.doc.data().location.length > 0){
           let info = locations[i].payload.doc.data() as Location;
           let lat = Number(info.location[0].geometry.location.lat.toFixed(4));

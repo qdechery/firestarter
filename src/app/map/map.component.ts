@@ -40,6 +40,14 @@ export class MapComponent implements OnInit {
   photo: any;
   startDrag: any[] = [];
   originalLoc: number;
+  // destDocId: any<Location>;
+  marker = {
+    display: true,
+    lat: null,
+    lng: null,
+  };
+  zoomLat: string;
+  zoomLng: string;
   // data: any[] = [];
   // private decimal: number = 6;
 
@@ -56,10 +64,17 @@ export class MapComponent implements OnInit {
       this.userid = user.uid;
     });
     
+    
     // this.user = this.auth.user.subscribe(user => user.displayName);
   }
 
+  onMarkerClick({target: marker}){
+    //Map Marker info
+    // this.marker.lat = event.latLng.lat();
+    // this.marker.lng = event.latLng.lng();
 
+    marker.nguiMapComponent.openInfoWindow('iw', marker);
+  }
 
   onClick(event) {
     if(event instanceof MouseEvent) return;
@@ -72,6 +87,7 @@ export class MapComponent implements OnInit {
     let newLng = event.latLng.lng();
     let modLatLng = newLat+","+newLng;
 
+
     //Get Date Time
     let dateNow = new Date().toDateString();
     let timeNow = new Date().toTimeString();
@@ -82,12 +98,15 @@ export class MapComponent implements OnInit {
       // console.log(locData);
 
       //Add destination to Firestore
-      this.destCollection.add({
-        id: this.afs.createId(), 
-        location: locData,
-        user: [this.user, this.userid],
-        timeAdded: [dateNow, timeNow] 
-      });
+      console.log('locdata:', locData);
+      if(locData.length !== 0){       
+        this.destCollection.add({
+          id: this.afs.createId(), 
+          location: locData,
+          user: [this.user, this.userid],
+          timeAdded: [dateNow, timeNow] 
+        });
+      }
     })
   }
 
@@ -95,23 +114,28 @@ export class MapComponent implements OnInit {
     this.destCollection = this.afs.collection<Location>('destinations');
     this.destination = this.destCollection.valueChanges();
     this.destination.subscribe(locations => {
+      // console.log('addDest locations:', locations);
       for (let i=0; i<locations.length; i++){
-        //Set lat and lng of each location in destinations collection from Firebase Firestore.
-        let lat = locations[i].location[0].geometry.location.lat;
-        let lng = locations[i].location[0].geometry.location.lng;
-        //Push all positions from Firestore to this.positions array
-        this.positions.push([lat, lng]);
+        if(locations[i].location.length > 0){      
+          //Set lat and lng of each location in destinations collection from Firebase Firestore.
+          let lat = locations[i].location[0].geometry.location.lat;
+          let lng = locations[i].location[0].geometry.location.lng;
+          //Push all positions from Firestore to this.positions array
+          this.positions.push([lat, lng]);
 
-        //Push all locations from Firestore to locations array 
-        let labelLoc = locations[i].location[0].formatted_address
-  
-        //Push location to this.locations Array 
-        this.locations.push(labelLoc);
+          //Push all locations from Firestore to locations array 
+          let labelLoc = locations[i].location[0].formatted_address
+    
+          //Push location to this.locations Array 
+          this.locations.push(labelLoc);
+        }
       }
     });
   }
 
   ngOnInit(){
+    this.zoomLat = '37.608013';
+    this.zoomLng = '-100.335167';
     this.addDestinations();
   }
 
@@ -123,70 +147,80 @@ export class MapComponent implements OnInit {
     this.destination = this.destCollection.valueChanges();
     this.destination.subscribe(locations => {
       for (let i=0; i<locations.length; i++){
-        let lat = Number(locations[i].location[0].geometry.location.lat.toFixed(4));
-        let lng = Number(locations[i].location[0].geometry.location.lng.toFixed(4));
-        if(JSON.stringify([lat, lng]) == JSON.stringify(this.startDrag)){
-          console.log(i)
-          return ;
+          console.log('location i:',locations[i].location[0]);
+        if(locations[i].location.length > 0){      
+          let lat = Number(locations[i].location[0].geometry.location.lat.toFixed(4));
+          let lng = Number(locations[i].location[0].geometry.location.lng.toFixed(4));
+          if(JSON.stringify([lat, lng]) == JSON.stringify(this.startDrag)){
+            return ;
+          }
         }
       } 
     })
-    // console.log(this.startDrag);
-    // this.originalLoc = this.destinationservice.whichId(this.startDrag);
-    // console.log(this.destinationservice.whichId(this.startDrag));
   }
 
   onDrag(event){
 
-    // 1. Get mousedown event lat/lng
-    // 2. Use that event lat/lng to retrieve the document ID
-    // 3. Get mouseup event lat/lng 
-    // 4. Use mouseup event lat/lng to retrieve the location's data
-    // 5. Make object like onClick of the replacement document's data
-    // 6. Replace the data in original document ID with new location's data.
+    if(event instanceof MouseEvent) return;
 
-    console.log('mouseup drag finish event:', event)
-    //Variables for retrieving firestore doc ID
+    // 1. Get mousedown event lat/lng
+    let origLoc = this.startDrag
+    // 2. Use that event lat/lng to retrieve the document ID
+    let destId = '';
+    let destDocId = 'B4ZU6I9F9F4bcgaaSW7Q';
+
+    //Take snapshot of destinations collection and find which ID 
+    //belongs to the event's lat/lng.
+    this.destCollection.snapshotChanges().subscribe(locations => {
+      //Get each location's lat/lng.
+      for (let i=0; i<locations.length; i++){  
+          let info = locations[i].payload.doc.data() as Location;
+        console.log('drag info:',info.location)        
+        if(info.location.length > 0){
+          let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
+          let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
+
+          //Assign destination ID if lat/lng of this document matches 
+          //the lat/lng of right click event.
+          console.log('lat:',lat, 'lng:', lng, 'origLoc:', origLoc)
+          if(JSON.stringify([lat, lng]) == JSON.stringify(origLoc)){
+            console.log('test')
+            destId = locations[i].payload.doc.id;
+            // destDocId = locations[i].payload.doc.data();
+          }
+        }
+      }
+    });
+    // 3. Get mouseup event lat/lng 
     let startLat = Number(event.latLng.lat().toFixed(4));
     let startLng = Number(event.latLng.lng().toFixed(4));
     let eventLatLng = [startLat, startLng];
-
-    console.log('this.startDrag:', this.onStartDrag(eventLatLng))
-  	//1. Get Event lat/lng
-    //Variables for retrieving address of dropped pin after dragging
+    // 4. Use mouseup event lat/lng to retrieve the location's data
     let newLat = event.latLng.lat();
     let newLng = event.latLng.lng();
     let modLatLng = newLat+","+newLng;
-
-    if(event instanceof MouseEvent) return;
-
-  	//2. Find the formatted_address
-  	// find the right location to use
- 	  // console.log('Map - whichLoc: ',this.lookup.whichLoc(this.locations,this.events, event));
-	  
+    let locData = []
     this.destinationservice.getAddress(modLatLng).subscribe(data=> {
+        locData = data['results']
         console.log('destinationservice.getaddres data:',data);
-    // this.locations.splice(this.originalLoc,1,data['results'][0].formatted_address)
-		// console.log('this.originalLoc:',this.originalLoc,'data results0:',data['results'][0].formatted_address);
-	  // console.log(data['results'])
-
     })
+    // 5. Replace the data in original document ID with new location's data.  
+    setTimeout(() => {this.updateDraggedLoc(destId, destDocId, locData, this.user, this.userid)},1500)
+  }
 
-    // this.destination = this.destCollection.snapshotChanges()
-    // this.destination.subscribe(locations => {
-    //   for (let i=0; i<locations.length; i++){  
-    //     let info = locations[i].payload.doc.data() as Location;
-
-    //     // console.log(locations[i].payload.doc.id, ...info);
-    //     let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
-    //     let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
-
-    //     if(JSON.stringify([lat, lng]) == JSON.stringify(eventLatLng)){
-    //       destId = locations[i].payload.doc.id;
-    //       // console.log('destId:', destId);
-    //     }
-    //   }
-    // })
+  updateDraggedLoc(destId, destDocId, locationData, user, userid) { 
+    this.locations=[];
+    this.positions=[];
+    //Get Date Time
+    console.log('destId:', destId, 'destDocId:', destDocId, 'locationData:', locationData, 'user:', user, 'userid:', userid)
+    let dateNow = new Date().toDateString();
+    let timeNow = new Date().toTimeString();
+    this.destCollection.doc(destId).update({
+        id: this.afs.createId(), 
+        location: locationData,
+        user: [user, userid],
+        timeAdded: [dateNow, timeNow] 
+      });
   }
 
   onRightClick(event){
@@ -198,7 +232,7 @@ export class MapComponent implements OnInit {
     let eventLatLng = [startLat, startLng];
 
     //Remove Map Marker Destination
-    const index = this.destinationservice.whichPos(this.positions, event)
+    // const index = this.destinationservice.whichPos(this.positions, event)
 
     //Get destination reference string
     let destId = '';
@@ -207,17 +241,20 @@ export class MapComponent implements OnInit {
     //belongs to the event's lat/lng.
     this.destCollection.snapshotChanges().subscribe(locations => {
       //Get each location's lat/lng.
-      for (let i=0; i<locations.length; i++){  
-        let info = locations[i].payload.doc.data() as Location;
-        let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
-        let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
+      for (let i=0; i<locations.length; i++){
+        console.log('rightclick locations[i].payload.doc.data():', locations[i].payload.doc.data())
+        if (locations[i].payload.doc.data().location.length > 0){
+          let info = locations[i].payload.doc.data() as Location;
+          let lat = Number(info.location[0].geometry.location.lat.toFixed(4));
+          let lng = Number(info.location[0].geometry.location.lng.toFixed(4));
 
-        //Assign destination ID if lat/lng of this document matches 
-        //the lat/lng of right click event.
-        if(JSON.stringify([lat, lng]) == JSON.stringify(eventLatLng)){
-          destId = locations[i].payload.doc.id;
-          // console.log('destId:', destId);
-        }
+          //Assign destination ID if lat/lng of this document matches 
+          //the lat/lng of right click event.
+          if(JSON.stringify([lat, lng]) == JSON.stringify(eventLatLng)){
+            destId = locations[i].payload.doc.id;
+            // console.log('destId:', destId);
+          }
+        }  
       }
       //Dedupe both UI (locations) and marker (positions) arrays
       //Delete the refernced document ID based on right click event location

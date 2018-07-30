@@ -1,19 +1,27 @@
+<div class='intro alert alert-info'>Add Destinations to the Map by Clicking. Remove Destinations with Right Click.</div>
 <div id='map'>
-<ngui-map class='map' style="height:80vh; width:100%"
-  center="[47.608013, -122.335167]"
+<ngui-map class='map' style="height:70vh; width:100%"
+  center="[{{zoomLat}}, {{zoomLng}}]"
   zoom='4'
-  [zoomControlOptions]="{position: 'TOP_CENTER'}"
+  [zoomControlOptions]="{position: 'TOP_RIGHT'}"
   [fullscreenControl]="true"
-  [fullscreenControlOptions]="{position: 'TOP_CENTER'}"
+  [fullscreenControlOptions]="{position: 'TOP_RIGHT'}"
   [scrollwheel]="true"
   (click)="onClick($event)">
   <marker *ngFor='let pos of positions' 
+    (click)='onMarkerClick($event)'
     [position]="pos"
     (rightclick)="onRightClick($event)"
     (dragstart)="onStartDrag($event)"
     (dragend)="onDrag($event)"
-    
-    draggable="true"></marker>
+    draggable="true">
+  </marker>
+  <info-window id="iw">
+      <div>
+        lat: {{ marker.lat }}, lng: {{ marker.lng }}
+      </div>
+      <button (click)="hideMarkerInfo()">Hide Info</button>
+    </info-window>
 </ngui-map>
 <!-- <button (click)="addDestinations()">Destinations</button> -->
 </div>

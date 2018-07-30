@@ -9,7 +9,7 @@
       "urls": [
         "dist/firestarter/favicon.ico",
         "dist/firestarter/index.html",
-        "dist/firestarter/main.20a02331517fed27eca8.js",
+        "dist/firestarter/main.5f4fa843b0faced983b3.js",
         "dist/firestarter/polyfills.2903ad11212d7d797800.js",
         "dist/firestarter/runtime.6afe30102d8fe7337431.js",
         "dist/firestarter/styles.e2c4d6586d512aa55361.css"
@@ -64,8 +64,8 @@
     "dist/firestarter/assets/images/icons/icon-96x96.png": "0250397474e629af71ba9aea2ea69556813abd82",
     "dist/firestarter/assets/images/logo.jpg": "4fcb6fcdebe44f04cc7a50440c8cc5500bfde536",
     "dist/firestarter/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-    "dist/firestarter/index.html": "3bd5ec015c7e9c3e72a2169668fe237dbf9f01e2",
-    "dist/firestarter/main.20a02331517fed27eca8.js": "5d4d222af458d6f6f2ad04396fe3a69c8dca68d7",
+    "dist/firestarter/index.html": "b042e826f4edc2ac2118ad3557026c0a83ba643b",
+    "dist/firestarter/main.5f4fa843b0faced983b3.js": "4cb91caecf1fcaae11b7b1848e3884787a07268b",
     "dist/firestarter/polyfills.2903ad11212d7d797800.js": "193f6d7b77c2bce633da2f543082303b4f32d7ed",
     "dist/firestarter/runtime.6afe30102d8fe7337431.js": "078e320cc6fdaf355836c3b1c52b059cdd33fc7e",
     "dist/firestarter/styles.e2c4d6586d512aa55361.css": "790312863d635766bb5c047283ea5fffeb66b3a8"
